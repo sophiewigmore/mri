@@ -1,0 +1,35 @@
+name: Create Version Line Branch
+
+on:
+  workflow_dispatch:
+    inputs:
+      version_line:
+        description: 'New version line to create (e.g. 1.2.x)'
+        required: false
+
+jobs:
+  create-version-line-branch:
+    name: Create Version Line Branch Off Of Main
+    runs-on: ubuntu-22.04
+    steps:
+    - name: Setup Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: 'stable'
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0  # gets full history
+        fetch-tags: true
+    # TODO make into a script?
+    - name: Get Latest Version Line
+      id: latest
+      run: |
+        latest=$(git branch -l | grep "\d*\.\d*\.x" | sort -V | tail -n1)
+        echo "Last version line branch: ${latest}"
+
+        new_version_line=$(echo $latest | awk -F'[.]' '{minor=$2; minor+=1; printf("%d.%d.%s\n", $1, minor, $3)}')
+        echo "New version line: ${new_version_line}"
+        echo "new_version_line=${new_version_line}" >> "$GITHUB_OUTPUT"
+        # need to check if there are any releases in this version line yet, do we need to include?
+        # create tag off of main and push it so that main starts getting minor bumps
