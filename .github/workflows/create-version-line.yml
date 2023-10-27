@@ -19,6 +19,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
       with:
+        fetch-depth: 0  # gets full history
         fetch-tags: true
     # TODO make into a script?
     - name: Get Latest Version Line

@@ -30,6 +30,7 @@ jobs:
         fetch-tags: true
 
     # - run: git fetch --depth=1 origin +refs/tags/*:refs/tags/* || true
+    # todo NOT DELETING
     - name: Reset Draft Release
       id: reset
       uses: paketo-buildpacks/github-config/actions/release/reset-draft@main
