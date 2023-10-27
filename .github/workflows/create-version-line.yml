@@ -18,6 +18,8 @@ jobs:
         go-version: 'stable'
     - name: Checkout
       uses: actions/checkout@v3
+      with:
+        fetch-tags: true
     # TODO make into a script?
     - name: Get Latest Version Line
       id: latest
