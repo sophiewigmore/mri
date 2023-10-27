@@ -12,10 +12,6 @@ jobs:
     name: Create Version Line Branch Off Of Main
     runs-on: ubuntu-22.04
     steps:
-    - name: Setup Go
-      uses: actions/setup-go@v3
-      with:
-        go-version: 'stable'
     - name: Checkout
       uses: actions/checkout@v3
       with:
