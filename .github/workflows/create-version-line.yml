@@ -18,8 +18,6 @@ jobs:
         fetch-depth: 0  # gets full history
         fetch-tags: true
     # TODO make into a script?
-    - name: Setup tmate session
-      uses: mxschmitt/action-tmate@v3
     - name: Get Latest Version Line
       id: latest
       run: |
