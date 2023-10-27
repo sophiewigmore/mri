@@ -18,20 +18,12 @@ jobs:
         go-version: 'stable'
     - name: Checkout
       uses: actions/checkout@v3
-      with:
-        fetch-depth: 0  # gets full history
-        fetch-tags: true
     # TODO make into a script?
     - name: Get Latest Version Line
       id: latest
       run: |
-        git branch -l
-        echo "----"
         git branch -a
-        echo "----"
-        git branch
-        echo "----"
-        latest=$(git branch -l | grep "\d*\.\d*\.x" | sort -V | tail -n1)
+        latest=$(git branch -a | grep "\d*\.\d*\.x" | sort -V | tail -n1 | sed -e 's/remotes\/origin\///g')
         echo "Last version line branch: ${latest}"
 
         new_version_line=$(echo $latest | awk -F'[.]' '{minor=$2; minor+=1; printf("%d.%d.%s\n", $1, minor, $3)}')
