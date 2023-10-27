@@ -25,6 +25,12 @@ jobs:
     - name: Get Latest Version Line
       id: latest
       run: |
+        git branch -l
+        echo "----"
+        git branch -a
+        echo "----"
+        git branch
+        echo "----"
         latest=$(git branch -l | grep "\d*\.\d*\.x" | sort -V | tail -n1)
         echo "Last version line branch: ${latest}"
 
@@ -33,3 +39,4 @@ jobs:
         echo "new_version_line=${new_version_line}" >> "$GITHUB_OUTPUT"
         # need to check if there are any releases in this version line yet, do we need to include?
         # create tag off of main and push it so that main starts getting minor bumps
+        # if version line input is passed in, validate and use that instead
