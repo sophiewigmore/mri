@@ -25,7 +25,6 @@ jobs:
     - name: Get Latest Version Line
       id: latest
       run: |
-        git branch -a
         git branch -a | grep "remotes\/origin\/\d*\.\d*\.x" | sort -V
         git branch -a | grep "\d*\.\d*\.x" | sort -V | tail -n1 | sed -e 's/remotes\/origin\///g'
         latest=$(git branch -a | grep "\d*\.\d*\.x" | sort -V | tail -n1 | sed -e 's/remotes\/origin\///g')
