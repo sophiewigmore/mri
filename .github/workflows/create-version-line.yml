@@ -17,7 +17,7 @@ jobs:
       with:
         fetch-depth: 0  # gets full history
         fetch-tags: true
-        token: ${{ github.token }}
+        token: ${{ secrets.PAKETO_BOT_GITHUB_TOKEN }}
     # TODO make into a script?
     # TODO: if version line input is passed in, validate and use that instead
     - name: Get Latest Version Line
