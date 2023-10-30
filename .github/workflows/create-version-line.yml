@@ -41,6 +41,7 @@ jobs:
         # if there's no 1.x.x branch, take the latest version released?
     - name: Bump Mainline Tag
       run: |
+        git checkout main
         new_version_line=$(echo ${{ steps.latest.outputs.new_version_line }} | awk -F'[.]' '{minor=$2; minor+=1; printf("%d.%d.0\n", $1, minor)}')
         echo "Bumping main-line version to: v${new_version_line}"
         git tag v${new_version_line}
