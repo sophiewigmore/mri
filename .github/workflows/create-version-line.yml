@@ -17,6 +17,7 @@ jobs:
       with:
         fetch-depth: 0  # gets full history
         fetch-tags: true
+        token: ${{ github.token }}
     # TODO make into a script?
     # TODO: if version line input is passed in, validate and use that instead
     - name: Get Latest Version Line
@@ -31,7 +32,6 @@ jobs:
         new_version_line=$(echo $latest | awk -F'[.]' '{minor=$2; minor+=1; printf("%d.%d.%s\n", $1, minor, $3)}')
         echo "New version line: ${new_version_line}"
         echo "new_version_line=${new_version_line}" >> "$GITHUB_OUTPUT"
-    - run: echo "${{ secrets.PAKETO_BOT_GITHUB_TOKEN }}" | gh auth login --with-token
     - name: Create Version Line Branch
       id: create-branch
       run: |
