@@ -35,10 +35,21 @@ jobs:
     - name: Create Version Line Branch
       id: create-branch
       run: |
-        # TODO: need to check if there are any releases in this version line yet, do we need to include?
-        git checkout -b ${{ steps.latest.outputs.new_version_line }} main
+        # Get the latest release in the version line already
+        # 1.3.x -> 1.3.*
+        tag_search=$(echo ${{ steps.latest.outputs.new_version_line }} | awk -F'[.]' '{printf("%d.%d.*\n", $1, $2)}')
+        # ex. Get the latest tag matching `git tag -l v1.3.*`
+        latest_release_tag=$(git tag -l v${tag_search} | sort -V | tail -n1)
+
+        # if there are no pre-existing releases in the version line, base it off main
+        if [[ -z $latest_release_tag ]]; then
+          latest_release_tag=main;
+        fi
+
+        git checkout -b ${{ steps.latest.outputs.new_version_line }} ${latest_release_tag}
         git push origin ${{ steps.latest.outputs.new_version_line }}
         # if there's no 1.x.x branch, take the latest version released?
+
     - name: Bump Mainline Tag
       run: |
         git checkout main
