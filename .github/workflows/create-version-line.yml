@@ -34,7 +34,7 @@ jobs:
         if [[ -z ${latest} ]]; then
           latest_tag=$(git describe --tags --abbrev=0)
           new_version_line=$(echo $latest | awk -F'[.]' '{printf("%d.%d.x\n", $1, $2)}')
-        else;
+        else
           echo "Last version line branch: ${latest}"
           # Bump the minor version in the version line branch
           new_version_line=$(echo $latest | awk -F'[.]' '{minor=$2; minor+=1; printf("%d.%d.%s\n", $1, minor, $3)}')
