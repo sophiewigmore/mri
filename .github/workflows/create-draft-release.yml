@@ -30,7 +30,8 @@ jobs:
         fetch-tags: true
 
     # - run: git fetch --depth=1 origin +refs/tags/*:refs/tags/* || true
-    # todo NOT DELETING
+    # TODO NOT DELETING previously drafted
+    # TODO don't draft a release if the new version is the same as last release
     - name: Reset Draft Release
       id: reset
       uses: paketo-buildpacks/github-config/actions/release/reset-draft@main
