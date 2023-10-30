@@ -20,6 +20,7 @@ jobs:
         token: ${{ secrets.PAKETO_BOT_GITHUB_TOKEN }}
     # TODO make into a script?
     # TODO: if version line input is passed in, validate and use that instead
+    # TODO  if there is no latest version line branch
     - name: Get Latest Version Line
       id: latest
       run: |
