@@ -29,6 +29,7 @@ jobs:
         fetch-depth: 0  # gets full history
         fetch-tags: true
 
+    # TODO 1- why is main draft release not picking up the latest tag we create - v1.5.0
     # - run: git fetch --depth=1 origin +refs/tags/*:refs/tags/* || true
     # TODO NOT DELETING previously drafted
     # TODO don't draft a release if the new version is the same as last release
