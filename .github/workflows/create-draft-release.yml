@@ -41,7 +41,7 @@ jobs:
     - name: Get Latest Tag on Branch ${{ github.ref_name }}
       id: latest
       run: |
-        version=$(git describe --tags --abbrev=0 ${{ github.ref_name }})
+        version=$(git tag --sort "version:refname" --merged  | tail -n1)
         echo $version
         echo "version=${version}" >> "$GITHUB_OUTPUT"
     - name: Calculate Semver Tag
