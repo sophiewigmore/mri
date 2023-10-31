@@ -38,7 +38,7 @@ jobs:
       with:
         repo: ${{ github.repository }}
         token: ${{ github.token }}
-    - name: Get Latest Release
+    - name: Get Latest Tag on Branch ${{ github.ref_name }}
       id: latest
       run: |
         version=$(git describe --tags --abbrev=0 ${{ github.ref_name }})
