@@ -18,7 +18,6 @@ jobs:
         fetch-depth: 0  # gets full history
         fetch-tags: true
         token: ${{ secrets.PAKETO_BOT_GITHUB_TOKEN }}
-    # TODO make into a script?
     # TODO: if version line input is passed in, validate and use that instead
     # TODO - update branches in automation 
     - name: Get Version Line Number
