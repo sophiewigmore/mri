@@ -25,7 +25,7 @@ jobs:
       run: |
         # Get the last version line branch in the form of <major>.<minor>.x
         git branch -a
-        latest=$(git branch -a | grep -P "\d+\.\d+\.x" | sort -V | tail -n1 | sed -e 's/remotes\/origin\///g')
+        latest=$(git branch -a | grep -p "\d+\.\d+\.x" | sort -v | tail -n1 | sed -e 's/remotes\/origin\///g')
 
         # If there is no previous version line branch in the form of <major>.<minor>.x, base version line off last release
         # ex. Last release 1.2.3, create version line 1.2.x
