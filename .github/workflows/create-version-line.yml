@@ -57,7 +57,19 @@ jobs:
 
         git checkout -b ${{ steps.latest.outputs.new_version_line }} ${latest_release_tag}
         git push origin ${{ steps.latest.outputs.new_version_line }}
-        # if there's no 1.x.x branch, take the latest version released?
+        # TODO: if there's no 1.x.x branch, take the latest version released?
+
+    - name: Modify Version Line Automation
+      id: modify-automation
+      run: |
+        pushd .github/workflows
+          sed -i 's/\-\ \main/\-\ ${{ steps.latest.outputs.new_version_line }}/g' *.yml
+        popd
+        # TODO MIGHT NEED TO USE COMMIT/PUSH ACTIONS
+        git diff
+        git add .github/workflows
+        git commit -m "Update workflows for ${{ steps.latest.outputs.new_version_line }}"
+        git push origin ${{ steps.latest.outputs.new_version_line }}
 
     - name: Bump Mainline Tag
       run: |
@@ -66,3 +78,4 @@ jobs:
         echo "Bumping main-line version to: v${new_version_line}"
         git tag v${new_version_line}
         git push origin v${new_version_line}
+        #TODO ADD DEPENDABOT CONFIG
