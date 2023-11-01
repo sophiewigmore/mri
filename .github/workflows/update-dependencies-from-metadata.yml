@@ -279,7 +279,7 @@ jobs:
     steps:
       - name: Setup Matrix Array
         id: setup
-        runs: |
+        run: |
           branches=($(git branch -a | grep -P "\d+\.\d+\.x" | sort -V | tail -n1 | sed -e 's/remotes\/origin\///g'))
           branches+=('main')
           json_branches=$(jq --compact-output --null-input '$ARGS.positional' --args -- "${branches[@]}")
