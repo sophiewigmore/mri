@@ -12,10 +12,17 @@ jobs:
     outputs:
       matrix: ${{ steps.setup.outputs.matrix }}
     steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # gets full history
+          fetch-tags: true
+          token: ${{ secrets.PAKETO_BOT_GITHUB_TOKEN }}
       - name: Setup Matrix Array
         id: setup
         run: |
-          branches=($(git branch -a | grep -P "\d+\.\d+\.x" | sort -V | tail -n1 | sed -e 's/remotes\/origin\///g'))
+          # get all version line branches
+          branches=($(git branch -a | grep -P "\d+\.\d+\.x" | sort -V | sed -e 's/remotes\/origin\///g'))
           branches+=('main')
           json_branches=$(jq --compact-output --null-input '$ARGS.positional' --args -- "${branches[@]}")
           echo $json_branches
