@@ -37,9 +37,9 @@ jobs:
       uses: paketo-buildpacks/github-config/actions/release/reset-draft@main
       with:
         repo: ${{ github.repository }}
-        token: ${{ github.token }}
-    - name: Setup tmate session
-      uses: mxschmitt/action-tmate@v3
+        token: ${{ secrets.PAKETO_BOT_GITHUB_TOKEN }}
+    # - name: Setup tmate session
+    #   uses: mxschmitt/action-tmate@v3
     - name: Get Latest Tag on Branch ${{ github.ref_name }}
       id: latest
       run: |
