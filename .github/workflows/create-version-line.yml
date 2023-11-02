@@ -88,7 +88,7 @@ jobs:
         git diff
 
     - name: Commit
-      id: commit
+      id: commit-2
       uses: paketo-buildpacks/github-config/actions/pull-request/create-commit@main
       with:
         message: "Update Dependabot Config For ${{ steps.latest.outputs.new_version_line }} Branch"
@@ -97,7 +97,7 @@ jobs:
         committer_email: swigmore@vmware.com
 
     - name: Push Branch 'main'
-      if: ${{ steps.commit.outputs.commit_sha != '' }}
+      if: ${{ steps.commit-2.outputs.commit_sha != '' }}
       uses: paketo-buildpacks/github-config/actions/pull-request/push-branch@main
       with:
         branch: main
