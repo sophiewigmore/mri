@@ -78,8 +78,6 @@ jobs:
         pathspec: ".github/workflows"
         committer_name: sophiewigmore
         committer_email: swigmore@vmware.com
-        keyid: ${{ secrets.PAKETO_BOT_GPG_SIGNING_KEY_ID }}
-        key: ${{ secrets.PAKETO_BOT_GPG_SIGNING_KEY }}
 
     - name: Push Branch '${{ steps.latest.outputs.new_version_line }}'
       if: ${{ steps.commit.outputs.commit_sha != '' }}
