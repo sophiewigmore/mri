@@ -1,11 +1,10 @@
 name: Create Version Line Branch
 
 on:
-  workflow_dispatch:
-    inputs:
-      version_line:
-        description: 'New version line to create (e.g. 1.2.x)'
-        required: false
+  workflow_dispatch: {}
+
+# avoid edge cases with version line creation / release creation
+concurrency: release
 
 jobs:
   create-version-line-branch:
@@ -18,7 +17,6 @@ jobs:
         fetch-depth: 0  # gets full history
         fetch-tags: true
         token: ${{ secrets.PAKETO_BOT_GITHUB_TOKEN }}
-    # TODO: if version line input is passed in, validate and use that instead
     - name: Get Version Line Number
       id: latest
       run: |

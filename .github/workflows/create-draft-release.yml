@@ -12,7 +12,6 @@ on:
         description: 'Version of the release to cut (e.g. 1.2.3)'
         required: false
 
-# TODO REMOVE
 concurrency: release
 
 jobs:
