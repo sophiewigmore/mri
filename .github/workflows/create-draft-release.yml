@@ -38,6 +38,8 @@ jobs:
       with:
         repo: ${{ github.repository }}
         token: ${{ github.token }}
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v3
     - name: Get Latest Tag on Branch ${{ github.ref_name }}
       id: latest
       run: |
