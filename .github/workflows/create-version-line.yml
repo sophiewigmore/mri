@@ -19,7 +19,6 @@ jobs:
         fetch-tags: true
         token: ${{ secrets.PAKETO_BOT_GITHUB_TOKEN }}
     # TODO: if version line input is passed in, validate and use that instead
-    # TODO - update branches in automation 
     - name: Get Version Line Number
       id: latest
       run: |
@@ -56,8 +55,6 @@ jobs:
         fi
 
         git checkout -b ${{ steps.latest.outputs.new_version_line }} ${latest_release_tag}
-        # git push origin ${{ steps.latest.outputs.new_version_line }}
-        # TODO: if there's no 1.x.x branch, take the latest version released?
 
     - name: Modify Version Line Automation
       id: modify-automation
@@ -65,10 +62,7 @@ jobs:
         pushd .github/workflows
           sed -i 's/\-\ \main/\-\ ${{ steps.latest.outputs.new_version_line }}/g' *.yml
         popd
-        # TODO MIGHT NEED TO USE COMMIT/PUSH ACTIONS
-        git config --global --add safe.directory "${GITHUB_WORKSPACE}"
         git diff
-        git push origin ${{ steps.latest.outputs.new_version_line }}
 
     - name: Commit
       id: commit
@@ -85,6 +79,29 @@ jobs:
       with:
         branch: ${{ steps.latest.outputs.new_version_line }}
 
+    - name: Update Dependabot Config
+      run: |
+        git checkout main
+        pushd .github
+          cat dependabot.yml | yq .updates | sed 's/target-branch: main/target-branch: ${{ steps.latest.outputs.new_version_line }}/g' >> dependabot.yml
+        popd
+        git diff
+
+    - name: Commit
+      id: commit
+      uses: paketo-buildpacks/github-config/actions/pull-request/create-commit@main
+      with:
+        message: "Update Dependabot Config For ${{ steps.latest.outputs.new_version_line }} Branch"
+        pathspec: ".github/"
+        committer_name: sophiewigmore
+        committer_email: swigmore@vmware.com
+
+    - name: Push Branch 'main'
+      if: ${{ steps.commit.outputs.commit_sha != '' }}
+      uses: paketo-buildpacks/github-config/actions/pull-request/push-branch@main
+      with:
+        branch: main
+
     - name: Bump Mainline Tag
       run: |
         git checkout main
@@ -92,4 +109,3 @@ jobs:
         echo "Bumping main-line version to: v${new_version_line}"
         git tag v${new_version_line}
         git push origin v${new_version_line}
-        #TODO ADD DEPENDABOT CONFIG

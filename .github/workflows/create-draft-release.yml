@@ -73,6 +73,7 @@ jobs:
     - name: Create Release
       uses: paketo-buildpacks/github-config/actions/release/create@main
       with:
+        #TODO- if the version is passed in - make sure the right target_commitish is retrieved  from the version line branch
         repo: ${{ github.repository }}
         token: ${{ secrets.PAKETO_BOT_GITHUB_TOKEN }}
         tag_name: v${{ steps.tag.outputs.tag }}
