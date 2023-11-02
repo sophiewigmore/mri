@@ -56,7 +56,7 @@ jobs:
         fi
 
         git checkout -b ${{ steps.latest.outputs.new_version_line }} ${latest_release_tag}
-        git push origin ${{ steps.latest.outputs.new_version_line }}
+        # git push origin ${{ steps.latest.outputs.new_version_line }}
         # TODO: if there's no 1.x.x branch, take the latest version released?
 
     - name: Modify Version Line Automation
