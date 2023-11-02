@@ -67,9 +67,24 @@ jobs:
         popd
         # TODO MIGHT NEED TO USE COMMIT/PUSH ACTIONS
         git diff
-        git add .github/workflows
-        git commit -m "Update workflows for ${{ steps.latest.outputs.new_version_line }}"
         git push origin ${{ steps.latest.outputs.new_version_line }}
+
+    - name: Commit
+      id: commit
+      uses: paketo-buildpacks/github-config/actions/pull-request/create-commit@main
+      with:
+        message: "Update workflows for ${{ steps.latest.outputs.new_version_line }}"
+        pathspec: ".github/workflows"
+        committer_name: sophiewigmore
+        committer_email: swigmore@vmware.com
+        keyid: ${{ secrets.PAKETO_BOT_GPG_SIGNING_KEY_ID }}
+        key: ${{ secrets.PAKETO_BOT_GPG_SIGNING_KEY }}
+
+    - name: Push Branch '${{ steps.latest.outputs.new_version_line }}'
+      if: ${{ steps.commit.outputs.commit_sha != '' }}
+      uses: paketo-buildpacks/github-config/actions/pull-request/push-branch@main
+      with:
+        branch: ${{ steps.latest.outputs.new_version_line }}
 
     - name: Bump Mainline Tag
       run: |
