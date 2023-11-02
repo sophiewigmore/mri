@@ -27,4 +27,3 @@ scripts/.util/tools.json
 scripts/.util/tools.sh
 scripts/integration.sh
 scripts/unit.sh
-buildpack.toml
