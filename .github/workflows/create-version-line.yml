@@ -66,6 +66,7 @@ jobs:
           sed -i 's/\-\ \main/\-\ ${{ steps.latest.outputs.new_version_line }}/g' *.yml
         popd
         # TODO MIGHT NEED TO USE COMMIT/PUSH ACTIONS
+        git config --global --add safe.directory "${GITHUB_WORKSPACE}"
         git diff
         git push origin ${{ steps.latest.outputs.new_version_line }}
 
