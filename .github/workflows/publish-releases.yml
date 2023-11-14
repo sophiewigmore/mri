@@ -13,11 +13,11 @@ jobs:
   publish:
     name: Publish
     runs-on: ubuntu-22.04
-    env:
-      GH_TOKEN: ${{ github.token }}
     steps:
     - name: Publish All Drafts
       id: drafts
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
       run: |
         IFS=" " read -r -a versions <<< "$(
           curl -L  https://api.github.com/repos/${{ github.repository }}/releases \
