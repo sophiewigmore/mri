@@ -11,8 +11,15 @@ on:
       version:
         description: 'Version of the release to cut (e.g. 1.2.3)'
         required: false
+  workflow_run:
+    workflows: ["Create Version Line Branch"]
+    types:
+    - completed
 
-concurrency: release
+concurrency:
+  group: release-${{ github.ref_name }}
+  cancel-in-progress: true
+
 
 jobs:
   release:
@@ -28,18 +35,6 @@ jobs:
       with:
         fetch-depth: 0  # gets full history
         fetch-tags: true
-
-    # TODO 1- why is main draft release not picking up the latest tag we create - v1.5.0
-    # TODO NOT DELETING previously drafted
-    # TODO don't draft a release if the new version is the same as last release
-    - name: Reset Draft Release
-      id: reset
-      uses: paketo-buildpacks/github-config/actions/release/reset-draft@main
-      with:
-        repo: ${{ github.repository }}
-        token: ${{ secrets.PAKETO_BOT_GITHUB_TOKEN }}
-    # - name: Setup tmate session
-    #   uses: mxschmitt/action-tmate@v3
     - name: Get Latest Tag on Branch ${{ github.ref_name }}
       id: latest
       run: |
@@ -57,7 +52,7 @@ jobs:
     - name: Calculate Semver Tag
       if: github.event.inputs.version == ''
       id: semver
-      uses: paketo-buildpacks/github-config/actions/tag/calculate-semver@semver-only
+      uses: paketo-buildpacks/github-config/actions/tag/calculate-semver@main
       with:
         repo: ${{ github.repository }}
         token: ${{ github.token }}
@@ -71,13 +66,33 @@ jobs:
           tag="${{ steps.semver.outputs.tag }}"
         fi
         echo "tag=${tag}" >> "$GITHUB_OUTPUT"
-    - name: Create Release
-      uses: paketo-buildpacks/github-config/actions/release/create@main
+    #TODO reset branch to main
+    - name: Reset Draft Release
+      id: reset
+      uses: paketo-buildpacks/github-config/actions/release/reset-draft@reset-draft-version-line
       with:
-        #TODO- if the version is passed in - make sure the right target_commitish is retrieved  from the version line branch
+        repo: ${{ github.repository }}
+        token: ${{ secrets.PAKETO_BOT_GITHUB_TOKEN }}
+        version: v${{ steps.tag.outputs.tag }}
+    - name: Create Draft Release
+      uses: paketo-buildpacks/github-config/actions/release/create@main
+      if: ${{ github.event_name != 'workflow_run' || github.ref_name != 'main' }}
+      with:
         repo: ${{ github.repository }}
         token: ${{ secrets.PAKETO_BOT_GITHUB_TOKEN }}
         tag_name: v${{ steps.tag.outputs.tag }}
         target_commitish: ${{ github.sha }}
         name: v${{ steps.tag.outputs.tag }}
         draft: true
+
+    # Publish release on main when triggered by the Create Version Line Branch workflow
+    - name: Create and Publish Release
+      uses: paketo-buildpacks/github-config/actions/release/create@main
+      if: ${{ github.event_name == 'workflow_run' && github.ref_name == 'main' }}
+      with:
+        repo: ${{ github.repository }}
+        token: ${{ secrets.PAKETO_BOT_GITHUB_TOKEN }}
+        tag_name: v${{ steps.tag.outputs.tag }}
+        target_commitish: ${{ github.sha }}
+        name: v${{ steps.tag.outputs.tag }}
+        draft: false
