@@ -27,7 +27,7 @@ jobs:
           --header "Authorization: token  ${{ secrets.PAKETO_BOT_GITHUB_TOKEN }}" \
           | jq -r '.[] | select(.draft == true) | .tag_name' | xargs
         )"
-        # echo "${{ secrets.PAKETO_BOT_GITHUB_TOKEN }}" | gh auth login --with-token
+
         for release in ${versions[@]}; do
           echo "Publishing ${release}"
           if [[ -z $(gh release view ${release} -R ${{ github.repository }} --json assets | jq -r '.assets[] | select(.name | contains(".tgz"))') ]]; then
