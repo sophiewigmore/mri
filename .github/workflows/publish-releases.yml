@@ -1,0 +1,37 @@
+name: Publish All Draft Releases
+# Publish all draft releases
+
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: '0 5 * * WED' # Weekly on Wednesday at 5:00 AM
+
+jobs:
+  publish:
+    name: Publish
+    runs-on: ubuntu-22.04
+    steps:
+    - name: Publish All Drafts
+      id: drafts
+      run: |
+        IFS=" " read -r -a versions <<< "$(
+          curl -L  https://api.github.com/repos/${{ github.repository }}/releases \
+          --fail-with-body \
+          --show-error \
+          --silent \
+          --header "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          | jq -r '.[] | select(.draft == true) | .tag_name' | xargs
+        )"
+        for release in ${versions[@]}; do
+          echo "Publishing ${release}"
+          if [[ -z $(gh release view ${release} --json assets | jq -r '.assets[] | select(.name | contains(".tgz"))') ]]; then
+            echo "Release does not contain .tgz asset, add it before publishing"
+            continue
+          fi
+          if [[ -z $(gh release view ${release} --json assets | jq -r '.assets[] | select(.name | contains(".cnb"))') ]]; then 
+            echo "Release does not contain .cnb asset, add it before publishing"
+            continue
+          fi
+
+          gh release edit ${release} --draft=false
+        done
