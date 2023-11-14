@@ -6,6 +6,9 @@ on:
   schedule:
     - cron: '0 5 * * WED' # Weekly on Wednesday at 5:00 AM
 
+concurrency:
+  group: release-${{ github.ref_name }}
+
 jobs:
   publish:
     name: Publish
