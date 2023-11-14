@@ -17,7 +17,7 @@ jobs:
     - name: Publish All Drafts
       id: drafts
       env:
-        GITHUB_TOKEN: ${{ github.token }}
+        GITHUB_TOKEN: ${{ secrets.PAKETO_BOT_GITHUB_TOKEN }}
       run: |
         IFS=" " read -r -a versions <<< "$(
           curl -L  https://api.github.com/repos/${{ github.repository }}/releases \
@@ -27,7 +27,7 @@ jobs:
           --header "Authorization: token  ${{ secrets.PAKETO_BOT_GITHUB_TOKEN }}" \
           | jq -r '.[] | select(.draft == true) | .tag_name' | xargs
         )"
-        echo "${{ secrets.PAKETO_BOT_GITHUB_TOKEN }}" | gh auth login --with-token
+        # echo "${{ secrets.PAKETO_BOT_GITHUB_TOKEN }}" | gh auth login --with-token
         for release in ${versions[@]}; do
           echo "Publishing ${release}"
           if [[ -z $(gh release view ${release} -R ${{ github.repository }} --json assets | jq -r '.assets[] | select(.name | contains(".tgz"))') ]]; then
