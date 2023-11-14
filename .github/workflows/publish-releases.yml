@@ -19,19 +19,37 @@ jobs:
           --fail-with-body \
           --show-error \
           --silent \
-          --header "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          --header "Authorization: token  ${{ secrets.PAKETO_BOT_GITHUB_TOKEN }}" \
           | jq -r '.[] | select(.draft == true) | .tag_name' | xargs
         )"
         for release in ${versions[@]}; do
           echo "Publishing ${release}"
           if [[ -z $(gh release view ${release} --json assets | jq -r '.assets[] | select(.name | contains(".tgz"))') ]]; then
             echo "Release does not contain .tgz asset, add it before publishing"
-            continue
+            exit 1
           fi
           if [[ -z $(gh release view ${release} --json assets | jq -r '.assets[] | select(.name | contains(".cnb"))') ]]; then 
             echo "Release does not contain .cnb asset, add it before publishing"
-            continue
+            exit 1
           fi
 
           gh release edit ${release} --draft=false
         done
+
+  failure:
+    name: Alert on Failure
+    runs-on: ubuntu-22.04
+    needs: [ publish ]
+    if: ${{ always() && needs.publish.result == 'failure' }}
+    steps:
+      - name: File Failure Alert Issue
+        uses: paketo-buildpacks/github-config/actions/issue/file@main
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          repo: ${{ github.repository }}
+          comment_if_exists: true
+          issue_title: "Failure: Publish draft releases"
+          issue_body: |
+            Publish All Draft Releases workflow [failed](https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}).
+          comment_body: |
+             Another failure occurred: https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}
