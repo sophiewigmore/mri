@@ -29,16 +29,16 @@ jobs:
         )"
         for release in ${versions[@]}; do
           echo "Publishing ${release}"
-          if [[ -z $(gh release view ${release} --json assets | jq -r '.assets[] | select(.name | contains(".tgz"))') ]]; then
+          if [[ -z $(gh release view ${release} -R ${{ github.repository }} --json assets | jq -r '.assets[] | select(.name | contains(".tgz"))') ]]; then
             echo "Release does not contain .tgz asset, add it before publishing"
             exit 1
           fi
-          if [[ -z $(gh release view ${release} --json assets | jq -r '.assets[] | select(.name | contains(".cnb"))') ]]; then 
+          if [[ -z $(gh release view ${release} -R ${{ github.repository }} --json assets | jq -r '.assets[] | select(.name | contains(".cnb"))') ]]; then
             echo "Release does not contain .cnb asset, add it before publishing"
             exit 1
           fi
 
-          gh release edit ${release} --draft=false
+          gh release edit ${release} -R ${{ github.repository }} --draft=false
         done
 
   failure:
