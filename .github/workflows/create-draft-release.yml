@@ -66,10 +66,9 @@ jobs:
           tag="${{ steps.semver.outputs.tag }}"
         fi
         echo "tag=${tag}" >> "$GITHUB_OUTPUT"
-    #TODO reset branch to main
     - name: Reset Draft Release
       id: reset
-      uses: paketo-buildpacks/github-config/actions/release/reset-draft@reset-draft-version-line
+      uses: paketo-buildpacks/github-config/actions/release/reset-draft@main
       with:
         repo: ${{ github.repository }}
         token: ${{ secrets.PAKETO_BOT_GITHUB_TOKEN }}

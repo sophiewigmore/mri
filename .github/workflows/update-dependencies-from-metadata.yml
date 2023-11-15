@@ -362,7 +362,7 @@ jobs:
       # TODO: move this branch to main once merged
       - name: Open Pull Request
         if: ${{ steps.commit.outputs.commit_sha != '' }}
-        uses: paketo-buildpacks/github-config/actions/pull-request/open@semver-only
+        uses: paketo-buildpacks/github-config/actions/pull-request/open@main
         with:
           token: ${{ secrets.PAKETO_BOT_GITHUB_TOKEN }}
           title: "Updates buildpack.toml with ${{ steps.update.outputs.new-versions }}"
