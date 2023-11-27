@@ -66,6 +66,14 @@ jobs:
       with:
         branch: ${{ steps.latest.outputs.new_version_line }}
 
+    - name: Setup Version Line Branch Protection Rules
+      uses: pivotal-cf/tanzu-cnb-github-config/actions/version-line/set-branch-protections@version-line-branch-protection
+      with:
+        repo: ${{ github.ref_name }}
+        branch: ${{ steps.latest.outputs.new_version_line }}
+      env:
+        GH_TOKEN: ${{ secrets.PAKETO_BOT_GITHUB_TOKEN }}
+
     - name: Update Dependabot Config
       run: |
         git checkout main
