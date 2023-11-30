@@ -1,7 +1,12 @@
 name: Create Version Line Branch
 
 on:
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Optional git tag to base version line branch off (default is latest tag off of main)'
+        required: false
+
 
 concurrency:
   group: release-${{ github.ref_name }}
@@ -20,9 +25,14 @@ jobs:
     - name: Get Version Line Number
       id: latest
       run: |
-        # Get the last version line branch in the form of <major>.<minor>.x
-        latest_tag=$(git tag --sort "version:refname" --merged | tail -n1)
-        echo "Latest release off main: ${latest_tag}"
+        set -eu -o pipefail
+        shopt -s inherit_errexit
+        latest_tag=${{ github.event.inputs.tag }}
+        if [ -z "${latest_tag}" ]; then
+          # Get the last version line branch in the form of <major>.<minor>.x
+          latest_tag=$(git tag --sort "version:refname" --merged | tail -n1)
+        fi
+        echo "Basing version line branch off of ${latest_tag}"
         new_version_line=$(echo ${latest_tag#v} | awk -F'[.]' '{printf("%d.%d.x\n", $1, $2)}')
 
         echo "New version line branch: ${new_version_line}"
@@ -65,14 +75,6 @@ jobs:
       uses: paketo-buildpacks/github-config/actions/pull-request/push-branch@main
       with:
         branch: ${{ steps.latest.outputs.new_version_line }}
-
-    - name: Setup Version Line Branch Protection Rules
-      uses: pivotal-cf/tanzu-cnb-github-config/actions/version-line/set-branch-protections@version-line-branch-protection
-      with:
-        repo: ${{ github.ref_name }}
-        branch: ${{ steps.latest.outputs.new_version_line }}
-      env:
-        GH_TOKEN: ${{ secrets.PAKETO_BOT_GITHUB_TOKEN }}
 
     - name: Update Dependabot Config
       run: |
