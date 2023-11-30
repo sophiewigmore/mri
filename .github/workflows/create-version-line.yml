@@ -36,6 +36,11 @@ jobs:
         new_version_line=$(echo ${latest_tag#v} | awk -F'[.]' '{printf("%d.%d.x\n", $1, $2)}')
 
         echo "New version line branch: ${new_version_line}"
+        if [[ -n $(git ls-remote --heads origin refs/heads/${new_version_line}) ]]; then
+          echo "Version line branch ${new_version_line} already exists."
+          exit 1
+        fi
+
         echo "new_version_line=${new_version_line}" >> "$GITHUB_OUTPUT"
     - name: Create Version Line Branch
       id: create-branch
@@ -104,5 +109,10 @@ jobs:
         git checkout main
         new_version_line=$(echo ${{ steps.latest.outputs.new_version_line }} | awk -F'[.]' '{minor=$2; minor+=1; printf("%d.%d.0\n", $1, minor)}')
         echo "Bumping main-line version to: v${new_version_line}"
+        if [[ -n $(git tag -l "v${new_version_line}") ]]; then
+          echo "Version line branch v${new_version_line} already exists."
+          exit 0
+        fi
+
         git tag v${new_version_line}
         git push origin v${new_version_line}
