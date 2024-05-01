@@ -16,3 +16,5 @@ updates:
       update-types:
       - "minor"
       - "patch"
+      exclude-patterns:
+      - "github.com/spdx/tools-golang"
