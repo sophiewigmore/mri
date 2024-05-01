@@ -18,3 +18,4 @@ updates:
       - "patch"
       exclude-patterns:
       - "github.com/spdx/tools-golang"
+      - "github.com/paketo-buildpacks/occam"
